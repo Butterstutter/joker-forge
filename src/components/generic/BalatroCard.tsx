@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { BalatroText } from "./balatroTextFormatter";
 import Tooltip from "./Tooltip";
+import { applyShaderToImage } from "./shaderImage";
 
 interface BaseCardData {
   id: string;
@@ -99,6 +100,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
   showCost = true,
 }) => {
   const [imageError, setImageError] = useState(false);
+  const [shaderImage, setShaderImage] = useState<string>("")
   const [placeholderError, setPlaceholderError] = useState(false);
   const [selectedAce, setSelectedAce] = useState("HC_A_hearts");
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
@@ -390,6 +392,22 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     );
   };
 
+  useEffect(() => {
+    const loadImage = async () => {
+      const image = new Image
+      image.src = `/images/${aceImageFolder}/${selectedAce}.png`
+      const editionData = data as EditionCardData;
+      const newShaderImage = await applyShaderToImage(
+        image,
+        editionData.shader,
+        134,
+        190,
+      )
+      setShaderImage(newShaderImage)
+    }
+    loadImage()
+  })
+
   const renderCardImage = () => {
     if (type === "edition") {
       const editionData = data as EditionCardData;
@@ -397,12 +415,12 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
       return (
         <div className="relative w-full h-full">
           <img
-            src={`/images/${aceImageFolder}/${selectedAce}.png`}
+            src={shaderImage ?? `/images/${aceImageFolder}/${selectedAce}.png`}
             alt=""
             className="w-full h-full object-cover pixelated"
             draggable="false"
           />
-          {shaderName && (
+          {!shaderImage && shaderName && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="bg-black/80 text-white px-3 py-1 rounded-lg text-sm font-bold border-2 border-white/50">
                 {shaderName}
