@@ -202,6 +202,11 @@ export interface BoosterData extends GameObjectData{
   instant_use: boolean;
   booster_type: BoosterType;
   kind?: string;
+  /* 
+    This field actually determines the group_name (Bottom
+    text while on the pack opening screen) in the loc_text.
+    Dont want to refactor the whole code so just leaving this as it is 
+  */
   group_key?: string;
   atlas?: string;
   pos?: { x: number; y: number };
@@ -640,27 +645,12 @@ export const VANILLA_SHADERS = [
 
 export const CUSTOM_SHADERS = [
   {
-    label: "Anaglyphic (SMODS)",
-    key: "anaglyphic",
-    filepath: "/shaders/anaglyphic.fs",
-  },
-  {
     label: "Flipped (stupxd)",
     key: "flipped",
     filepath: "/shaders/flipped.fs",
   },
-  {
-    label: "Fluorescent (SMODS)",
-    key: "fluorescent",
-    filepath: "/shaders/fluorescent.fs",
-  },
   { label: "Gilded (SMODS)", key: "gilded", filepath: "/shaders/gilded.fs" },
   { label: "Gold (stupxd)", key: "gold", filepath: "/shaders/gold.fs" },
-  {
-    label: "Greyscale (SMODS)",
-    key: "greyscale",
-    filepath: "/shaders/greyscale.fs",
-  },
   { label: "Ionized (SMODS)", key: "ionized", filepath: "/shaders/ionized.fs" },
   {
     label: "Laminated (SMODS)",
@@ -671,11 +661,6 @@ export const CUSTOM_SHADERS = [
     label: "Monochrome (SMODS)",
     key: "monochrome",
     filepath: "/shaders/monochrome.fs",
-  },
-  {
-    label: "Overexposed (SMODS)",
-    key: "overexposed",
-    filepath: "/shaders/overexposed.fs",
   },
   { label: "Sepia (SMODS)", key: "sepia", filepath: "/shaders/sepia.fs" },
 ] as const;
@@ -1986,6 +1971,12 @@ export const getRankByValue = (value: string) => {
 // Get rank data by ID
 export const getRankById = (id: number) => {
   return RANKS.find((rank) => rank.id === id);
+};
+
+// Get rank label by ID 
+// (Added by Errynei for bug fix that expected the label, not the rank value, in EditCardEffect.ts)
+export const getRankLabelById = (id: number) => {
+    return RANKS.find((rank) => rank.id === id)?.label;
 };
 
 // Get suit data by value

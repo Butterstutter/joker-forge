@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { EDITIONS, getRankId } from "../../data/BalatroUtils";
+import { EDITIONS, getRankId, getRankLabelById } from "../../data/BalatroUtils";
 
 export const generateEditCardEffectCode = (
   effect: Effect,
@@ -60,7 +60,7 @@ const generateJokerCode = (
     } else if (newRank.value === "random") {
       rankParam = "pseudorandom_element(SMODS.Ranks, 'edit_card_rank').key";
     } else if (newRank.value !== "none") {
-      rankParam = `"${getRankId(newRank.value as string)}"`;
+        rankParam = `"${getRankLabelById(getRankId(newRank.value as string))}"`;
     }
 
     modificationCode += `
@@ -179,7 +179,7 @@ const generateCardCode = (
     if (newRank === "random") {
       rankParam = "pseudorandom_element(SMODS.Ranks, 'edit_card_rank').key";
     } else if (newRank !== "none") {
-      rankParam = `"${getRankId(newRank)}"`;
+        rankParam = `"${getRankLabelById(getRankId(newRank))}"`;
     }
 
     modificationCode += `

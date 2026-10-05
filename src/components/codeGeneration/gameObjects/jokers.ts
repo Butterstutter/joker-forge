@@ -2247,6 +2247,10 @@ export const applyIndents = (
   for (let i = 0; i < stringLines.length; i++) {
     
     let line = stringLines[i]
+    if (line.startsWith("--")) {
+      finalCode += line;
+      continue;
+    }
 
     while (line.startsWith(' ')){
       line = line.slice(1)}

@@ -885,14 +885,14 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                     />
 
                     <InputField
-                      label="Group Key"
+                      label="Bottom text while on the pack opening screen."
                       value={formData.group_key || ""}
                       onChange={(e) =>
                         onFormDataChange({
                           group_key: e.target.value || undefined,
                         })
                       }
-                      placeholder="e.g. k_booster_group_mystical"
+                      placeholder="e.g. Select 1 of 3 Common Jokers"
                     />
 
                     <div className="flex items-center gap-3">

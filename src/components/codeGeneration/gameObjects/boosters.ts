@@ -62,10 +62,6 @@ const generateSingleBooster = (
     code += `    kind = '${booster.kind}',\n`;
   }
 
-  if (booster.group_key) {
-    code += `    group_key = "${booster.group_key}",\n`;
-  }
-
   if (booster.draw_hand) {
     code += `    draw_hand = true,\n`;
   }

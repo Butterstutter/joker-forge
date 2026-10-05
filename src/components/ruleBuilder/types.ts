@@ -7,14 +7,14 @@ export interface Rule {
   conditionGroups: ConditionGroup[];
   effects: Effect[];
   randomGroups: RandomGroup[];
-  loops: LoopGroup[]
+  loops: LoopGroup[];
 }
 
 // A group of effects with shared random chance
 export interface RandomGroup {
   id: string;
-  chance_numerator: {value: number | string, valueType?: string};
-  chance_denominator: {value: number | string, valueType?: string};
+  chance_numerator: { value: number | string; valueType?: string };
+  chance_denominator: { value: number | string; valueType?: string };
   respect_probability_effects: boolean;
   custom_key: string;
   effects: Effect[];
@@ -22,7 +22,7 @@ export interface RandomGroup {
 
 export interface LoopGroup {
   id: string;
-  repetitions: {value: number | string, valueType?: string};
+  repetitions: { value: number | string; valueType?: string };
   effects: Effect[];
 }
 
@@ -38,7 +38,7 @@ export interface Condition {
   id: string;
   type: string;
   negate: boolean; // For NOT logic
-  params: Record<string, {value: unknown, valueType?: string}>;
+  params: Record<string, { value: unknown; valueType?: string }>;
   operator?: string;
 }
 
@@ -46,22 +46,22 @@ export interface Condition {
 export interface Effect {
   id: string;
   type: string;
-  params: Record<string, {value: unknown, valueType?: string}>;
+  params: Record<string, { value: unknown; valueType?: string }>;
   customMessage?: string;
 }
 
 export interface GlobalTriggerDefinition {
   id: string;
-  label: Record <string, string>;
-  description: Record <string, string>;
+  label: Record<string, string>;
+  description: Record<string, string>;
   category: string;
-  objectUsers: Array <string>
+  objectUsers: Array<string>;
 }
 
 // When a parameter should be shown based on other parameter values
 export interface ShowWhenCondition {
   parameter: string;
-  values: string[]; 
+  values: string[];
 }
 
 // Interface for condition parameter options
@@ -69,7 +69,7 @@ export interface ConditionParameterOption {
   value: string;
   label: string;
   valueType?: string;
-  exempt?: string[],
+  exempt?: string[];
 }
 
 // Interface for condition parameters
@@ -81,17 +81,32 @@ export interface ConditionParameter {
   options?:
     | ConditionParameterOption[]
     | (() => ConditionParameterOption[])
-    | ((parentValues: Record<string, {value: unknown, valueType?: string}>) => ConditionParameterOption[]);
+    | ((
+        parentValues: Record<string, { value: unknown; valueType?: string }>,
+      ) => ConditionParameterOption[]);
   min?: number;
   max?: number;
   default?: unknown;
   showWhen?: ShowWhenCondition;
   variableTypes?: Array<
-  "number" | "suit" | "rank" | "pokerhand" | "key" | "text" |
-  "rank_context" | "suit_context" | "joker_context" | "enhancement_context" | "seal_context" | 
-  "edition_context" | "consumable_context" | "tag_context" | "booster_context" | "voucher_context"
+    | "number"
+    | "suit"
+    | "rank"
+    | "pokerhand"
+    | "key"
+    | "text"
+    | "rank_context"
+    | "suit_context"
+    | "joker_context"
+    | "enhancement_context"
+    | "seal_context"
+    | "edition_context"
+    | "consumable_context"
+    | "tag_context"
+    | "booster_context"
+    | "voucher_context"
   >;
-  exemptObjects?: string[]
+  exemptObjects?: string[];
 }
 
 export interface GlobalConditionTypeDefinition {
@@ -101,15 +116,15 @@ export interface GlobalConditionTypeDefinition {
   params: ConditionParameter[];
   applicableTriggers?: string[];
   category: string;
-  objectUsers: string[]
+  objectUsers: string[];
 }
 
 // Interface for effect parameter options
 export interface EffectParameterOption {
   value: string;
-  label: string;  
+  label: string;
   valueType?: string;
-  exempt?: string[],
+  exempt?: string[];
   checked?: boolean;
 }
 
@@ -122,18 +137,33 @@ export interface EffectParameter {
   options?:
     | EffectParameterOption[]
     | (() => EffectParameterOption[])
-    | ((parentValues: Record<string, {value: unknown, valueType?: string}>) => EffectParameterOption[]);
-  checkboxOptions?: EffectParameterOption[]
+    | ((
+        parentValues: Record<string, { value: unknown; valueType?: string }>,
+      ) => EffectParameterOption[]);
+  checkboxOptions?: EffectParameterOption[];
   min?: number;
   max?: number;
   default?: unknown;
   showWhen?: ShowWhenCondition;
   variableTypes?: Array<
-  "number" | "suit" | "rank" | "pokerhand" | "key" | "text" |
-  "rank_context" | "suit_context" | "joker_context" | "enhancement_context" | "seal_context" | 
-  "edition_context" | "consumable_context" | "tag_context" | "booster_context" | "voucher_context"
-  >;  
-  exemptObjects?: string[]
+    | "number"
+    | "suit"
+    | "rank"
+    | "pokerhand"
+    | "key"
+    | "text"
+    | "rank_context"
+    | "suit_context"
+    | "joker_context"
+    | "enhancement_context"
+    | "seal_context"
+    | "edition_context"
+    | "consumable_context"
+    | "tag_context"
+    | "booster_context"
+    | "voucher_context"
+  >;
+  exemptObjects?: string[];
 }
 
 export interface GlobalEffectTypeDefinition {
@@ -143,7 +173,7 @@ export interface GlobalEffectTypeDefinition {
   params: EffectParameter[];
   applicableTriggers?: string[];
   category: string;
-  objectUsers: string[]
+  objectUsers: string[];
 }
 
 // Interface for logical operators

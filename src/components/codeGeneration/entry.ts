@@ -245,6 +245,7 @@ export const exportModCode = async (
       sortedJokers,
       sounds,
       sortedConsumables,
+      consumableSets.length > 0,
       customRarities,
       sortedBoosters,
       sortedEnhancements,
@@ -477,6 +478,7 @@ const generateMainLuaCode = (
   jokers: JokerData[],
   sounds: SoundData[],
   consumables: ConsumableData[],
+  areThereAnyConsumableSets: boolean,
   customRarities: RarityData[],
   boosters: BoosterData[],
   enhancements: EnhancementData[],
@@ -605,6 +607,21 @@ to_big = to_big or function(a) return a end
 lenient_bignum = lenient_bignum or function(a) return a end
 `;
 
+  output += `
+-- this function is used to load everything within a folder.
+-- Jokerforge doesnt use it because it doesnt make loading order easy
+local function load_folder(path)
+  local files = NFS.getDirectoryItemsInfo(mod_path .. "/" .. path)
+  for i = 1, #files do
+    local file_name = files[i].name
+    if file_name:sub(-4) == ".lua" then
+      assert(SMODS.load_file(path .. file_name))()
+    end
+  end
+end
+`
+
+/* Not necessary i think
 const createIndexList = (objects : GameObjectData[]) => {
   const alphabetOrder = objects.sort((a,b)=>a.objectKey.localeCompare(b.objectKey))
   const order : Array < Array <number> > = []
@@ -623,153 +640,91 @@ const createIndexList = (objects : GameObjectData[]) => {
 
   return indexArray
 }
+*/
 
   if (jokers.length > 0) {
-    const indexArray = createIndexList(jokers)
     output += `
-local jokerIndexList = {${indexArray}}
-
-local function load_jokers_folder()
-    local mod_path = SMODS.current_mod.path
-    local jokers_path = mod_path .. "/jokers"
-    local files = NFS.getDirectoryItemsInfo(jokers_path)
-    for i = 1, #jokerIndexList do
-        local file_name = files[jokerIndexList[i]].name
-        if file_name:sub(-4) == ".lua" then
-            assert(SMODS.load_file("jokers/" .. file_name))()
-        end
-    end
+-- load the jokers
+if true then
+    ${
+      jokers.map((v) =>`assert(SMODS.load_file("jokers/${v.objectKey}.lua"))()`).join('\n  ')
+    }
 end
-
 `;
   }
 
   if (consumables.length > 0) {
-    const indexArray = createIndexList(consumables)
     output += `
-local consumableIndexList = {${indexArray}}
-
-local function load_consumables_folder()
-    local mod_path = SMODS.current_mod.path
-    local consumables_path = mod_path .. "/consumables"
-    local files = NFS.getDirectoryItemsInfo(consumables_path)
-    local set_file_number = #files + 1
-    for i = 1, #files do
-        if files[i].name == "sets.lua" then
-            assert(SMODS.load_file("consumables/sets.lua"))()
-            set_file_number = i
-        end
-    end    
-    for i = 1, #consumableIndexList do
-        local j = consumableIndexList[i]
-        if j >= set_file_number then 
-            j = j + 1
-        end
-        local file_name = files[j].name
-        if file_name:sub(-4) == ".lua" then
-            assert(SMODS.load_file("consumables/" .. file_name))()
-        end
-    end
+-- load the consumables
+if true then
+    ${
+      consumables.map((v) =>`assert(SMODS.load_file("consumables/${v.objectKey}.lua"))()`).join('\n  ')
+    }
 end
-
 `;
+  }
+  if (areThereAnyConsumableSets) {
+    output += `
+--load the sets
+assert(SMODS.load_file("consumables/sets.lua"))()
+`
   }
 
   if (enhancements.length > 0) {
-    const indexArray= createIndexList(enhancements)
     output += `
-local enhancementIndexList = {${indexArray}}
-
-local function load_enhancements_folder()
-    local mod_path = SMODS.current_mod.path
-    local enhancements_path = mod_path .. "/enhancements"
-    local files = NFS.getDirectoryItemsInfo(enhancements_path)
-    for i = 1, #enhancementIndexList do
-        local file_name = files[enhancementIndexList[i]].name
-        if file_name:sub(-4) == ".lua" then
-            assert(SMODS.load_file("enhancements/" .. file_name))()
-        end
-    end
+-- load the enhancements
+if true then
+    ${
+      enhancements.map((v) =>`assert(SMODS.load_file("enhancements/${v.objectKey}.lua"))()`).join('\n  ')
+    }
 end
 
 `;
   }
 
   if (seals.length > 0) {
-    const indexArray= createIndexList(seals)
     output += `
-local sealIndexList = {${indexArray}}
-
-local function load_seals_folder()
-    local mod_path = SMODS.current_mod.path
-    local seals_path = mod_path .. "/seals"
-    local files = NFS.getDirectoryItemsInfo(seals_path)
-    for i = 1, #sealIndexList do
-        local file_name = files[sealIndexList[i]].name
-        if file_name:sub(-4) == ".lua" then
-            assert(SMODS.load_file("seals/" .. file_name))()
-        end
-    end
+-- load the seals
+if true then
+    ${
+      seals.map((v) =>`assert(SMODS.load_file("seals/${v.objectKey}.lua"))()`).join('\n  ')
+    }
 end
 
 `;
   }
   
   if (editions.length > 0) {
-    const indexArray= createIndexList(editions)
     output += `
-local editionIndexList = {${indexArray}}
-
-local function load_editions_folder()
-    local mod_path = SMODS.current_mod.path
-    local editions_path = mod_path .. "/editions"
-    local files = NFS.getDirectoryItemsInfo(editions_path)
-    for i = 1, #editionIndexList do
-        local file_name = files[editionIndexList[i]].name
-        if file_name:sub(-4) == ".lua" then
-            assert(SMODS.load_file("editions/" .. file_name))()
-        end
-    end
+-- load the editions
+if true then
+    ${
+      editions.map((v) =>`assert(SMODS.load_file("editions/${v.objectKey}.lua"))()`).join('\n  ')
+    }
 end
 
 `;
   }
 
   if (vouchers.length > 0) {
-    const indexArray= createIndexList(vouchers)
     output += `
-local voucherIndexList = {${indexArray}}
-
-local function load_vouchers_folder()
-    local mod_path = SMODS.current_mod.path
-    local vouchers_path = mod_path .. "/vouchers"
-    local files = NFS.getDirectoryItemsInfo(vouchers_path)
-    for i = 1, #voucherIndexList do
-        local file_name = files[voucherIndexList[i]].name
-        if file_name:sub(-4) == ".lua" then
-            assert(SMODS.load_file("vouchers/" .. file_name))()
-        end
-    end
+-- load the vouchers
+if true then
+    ${
+      vouchers.map((v) =>`assert(SMODS.load_file("vouchers/${v.objectKey}.lua"))()`).join('\n  ')
+    }
 end
 
 `;
   }
 
   if (decks.length > 0) {
-    const indexArray= createIndexList(decks)
     output += `
-local deckIndexList = {${indexArray}}
-
-local function load_decks_folder()
-    local mod_path = SMODS.current_mod.path
-    local decks_path = mod_path .. "/decks"
-    local files = NFS.getDirectoryItemsInfo(decks_path)
-    for i = 1, #deckIndexList do
-        local file_name = files[deckIndexList[i]].name
-        if file_name:sub(-4) == ".lua" then
-            assert(SMODS.load_file("decks/" .. file_name))()
-        end
-    end
+-- load the decks
+if true then
+    ${
+      decks.map((v) =>`assert(SMODS.load_file("decks/${v.objectKey}.lua"))()`).join('\n  ')
+    }
 end
 
 `;
@@ -792,64 +747,28 @@ end
   }
 
   if (customRarities.length > 0) {
-    output += `local function load_rarities_file()
-    local mod_path = SMODS.current_mod.path
-    assert(SMODS.load_file("rarities.lua"))()
-end
+    output += `
 
-load_rarities_file()
+assert(SMODS.load_file("rarities.lua"))()
+
 `;
   }
 
   if (boosters.length > 0) {
     output += `
-local function load_boosters_file()
-    local mod_path = SMODS.current_mod.path
-    assert(SMODS.load_file("boosters.lua"))()
-end
 
-load_boosters_file()
+-- load boosters
+assert(SMODS.load_file("boosters.lua"))()
 `;
   }
 
   if (sounds.length > 0) {
-    output += `assert(SMODS.load_file("sounds.lua"))()\n`;
-  }
-
-  if (jokers.length > 0) {
-    output += `load_jokers_folder()
+    output += `
+--load sounds
+assert(SMODS.load_file("sounds.lua"))()
 `;
   }
 
-  if (consumables.length > 0) {
-    output += `load_consumables_folder()
-`;
-  }
-
-  if (enhancements.length > 0) {
-    output += `load_enhancements_folder()
-`;
-  }
-
-  if (seals.length > 0) {
-    output += `load_seals_folder()
-`;
-  }
-
-  if (editions.length > 0) {
-    output += `load_editions_folder()
-`;
-  }
-  
-   if (vouchers.length > 0) {
-    output += `load_vouchers_folder()
-`;
-  }
-
-  if (decks.length > 0) {
-    output += `load_decks_folder()
-`;
-  }
 
   if (jokers.length > 0) {
     const poolsMap = collectJokerPools(jokers);

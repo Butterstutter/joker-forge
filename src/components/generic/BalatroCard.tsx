@@ -23,7 +23,6 @@ interface ConsumableCardData extends BaseCardData {
   set: string;
 }
 
-
 interface BoosterCardData extends BaseCardData {
   config: {
     extra: number;
@@ -49,7 +48,6 @@ interface DeckCardData extends BaseCardData {
   Config_consumables?: string[];
 }
 
-
 type CardData =
   | JokerCardData
   | ConsumableCardData
@@ -57,10 +55,17 @@ type CardData =
   | BaseCardData
   | EditionCardData
   | VoucherCardData
-  | DeckCardData
+  | DeckCardData;
 
 interface BalatroCardProps {
-  type: "joker" | "consumable" | "booster" | "card" | "edition" | "voucher" | "deck";
+  type:
+    | "joker"
+    | "consumable"
+    | "booster"
+    | "card"
+    | "edition"
+    | "voucher"
+    | "deck";
   data: CardData;
   onClick?: () => void;
   className?: string;
@@ -351,7 +356,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
       const jokerData = data as JokerCardData;
       if (jokerData.locVars && Array.isArray(jokerData.locVars.vars)) {
         const colours = jokerData.locVars.vars.filter(
-          (v) => typeof v === "string"
+          (v) => typeof v === "string",
         ) as string[];
         return colours.length > 0 ? { colours } : undefined;
       }

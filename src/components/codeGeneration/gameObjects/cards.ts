@@ -120,7 +120,7 @@ const generateCalculateFunction = (
   rules.forEach((rule) => {
     let triggerCondition = generateTriggerContext('card', rule.trigger);
     if (rule.trigger === "card_scored" && itemType === "edition") {
-      triggerCondition = "context.pre_joker or (context.main_scoring and context.cardarea == G.play)";
+      triggerCondition = "(context.pre_joker or (context.main_scoring and context.cardarea == G.play))";
     }
     const conditionCode = generateConditionChain(rule, itemType);
 

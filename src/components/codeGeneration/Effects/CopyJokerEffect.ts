@@ -32,6 +32,10 @@ const generateJokerCode = (
   const position = (effect.params?.position?.value as string) || "first";
   const specificIndex = (effect.params?.specific_index?.value as number) || 1;
   const edition = (effect.params?.edition?.value as string) || "none";
+  const normalizedEdition = //Added by Errynei to fix the prefix "e_" not being added to editions
+      edition === "none" || edition.startsWith("e_")
+          ? edition
+          : `e_${edition}`;
   const customMessage = effect.customMessage;
   const ignoreSlots = (effect.params?.ignore_slots?.value as string) === "ignore";
   const sticker = (effect.params?.sticker?.value as string) || "none"
@@ -39,7 +43,7 @@ const generateJokerCode = (
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
 
-  const isNegative = edition === "e_negative";
+  const isNegative = normalizedEdition === "e_negative";
   const hasEdition = edition !== "none";
   const hasSticker = sticker !== "none";
 
@@ -141,7 +145,7 @@ const generateJokerCode = (
   // Generate copy logic
   const editionCode = hasEdition
     ? `
-                        copied_joker:set_edition("${edition}", true)`
+                        copied_joker:set_edition("${normalizedEdition}", true)`
     : "";
   const stickerCode = hasSticker
     ? `copied_joker:add_sticker('${sticker}', true)`
@@ -195,7 +199,11 @@ const generateConsumableCode = (
 ): EffectReturn => {
   const selection_method = effect.params?.selection_method?.value as string || "random";
   const amount = effect.params?.amount?.value as string || '1';
-  const edition = effect.params?.edition?.value as string || "none";
+  const edition = (effect.params?.edition?.value as string) || "none";
+  const normalizedEdition = //Added by Errynei to fix the prefix "e_" not being added to editions
+      edition === "none" || edition.startsWith("e_")
+          ? edition
+          : `e_${edition}`;
   const customMessage = effect.customMessage;
 
   let copyJokerCode = `
@@ -269,7 +277,7 @@ __PRE_RETURN_CODE__
               copied_joker:set_edition(edition, true)`;
   } else if (edition !== "none") {
         copyJokerCode += `
-              copied_joker:set_edition('${edition}', true)`;
+              copied_joker:set_edition('${normalizedEdition}', true)`;
   }
 
 if (selection_method === "selected") {
@@ -313,13 +321,17 @@ const generateCardCode = (
   const jokerKey = (effect.params?.joker_key?.value as string) || "";
   const position = (effect.params?.position?.value as string) || "first";
   const edition = (effect.params?.edition?.value as string) || "none";
+  const normalizedEdition = //Added by Errynei to fix the prefix "e_" not being added to editions
+      edition === "none" || edition.startsWith("e_")
+          ? edition
+          : `e_${edition}`;
   const customMessage = effect.customMessage;
 
   const normalizedJokerKey = jokerKey.startsWith("j_") 
   ? jokerKey 
   : `j_${jokerKey}`
 
-  const isNegative = edition === "e_negative";
+    const isNegative = normalizedEdition === "e_negative";
   const hasEdition = edition !== "none";
 
   let jokerSelectionCode = "";
@@ -359,7 +371,7 @@ const generateCardCode = (
 
   const editionCode = hasEdition
     ? `
-                        copied_joker:set_edition("${edition}", true)`
+                        copied_joker:set_edition("${normalizedEdition}", true)`
     : "";
 
   const bufferCode = isNegative
