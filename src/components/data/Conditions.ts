@@ -2061,7 +2061,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     applicableTriggers: ["probability_result"],
     params: [
       {
-        id: "status",
+        id: "probability_outcome_status",
         type: "select",
         label: "Status",
         options: [
